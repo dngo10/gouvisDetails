@@ -100,7 +100,7 @@ export class HeaderComponent implements OnInit {
   }
 
   getRecord(ID : string){
-    this.currentChoice.imageSource = "../../assets/PreViewPictures/" +ID.substr(0, ID.length-4).replace(' ', '%20') + ".jpg";
+    this.currentChoice.imageSource = "/assets/PreViewPictures/" +ID.substr(0, ID.length-4).replace(' ', '%20') + ".jpg";
     this.currentChoice.chosenItem = this.DataDwgArray.findIndex((getDwgData) => {
       return getDwgData.fileName == ID;
     });
