@@ -1,0 +1,72 @@
+<div class="header23">
+    <H2>Gouvis Engineering</H2>
+    <div class="seachBar">
+        <mat-form-field class="SearchMe mat-display-1">
+            <input matInput placeholder="name: xxx | desc: xxx | file : xxx"  [(ngModel)]="value">  
+            <button mat-button *ngIf="value"  matSuffix mat-icon-button aria-label="Clear" (click)= clearInput()>
+                <mat-icon>close</mat-icon>
+            </button>
+          </mat-form-field>
+
+    </div>
+    <div class= "block1">
+        <div class = "table-container">
+            <table mat-table [dataSource] ="dataSource" matSort class="mat-elevation-z8 table1">
+                <ng-container matColumnDef="ID">
+                  <td mat-header-cell *matHeaderCellDef class="IDcol"> File Name </td>
+                  <td mat-cell class="IDcol" *matCellDef="let element"> {{element.fileName}} </td>
+                </ng-container> 
+        
+                <ng-container matColumnDef="description">
+                  <td mat-header-cell *matHeaderCellDef> description </td>
+                  <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+                </ng-container>
+        
+                <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;" 
+                    
+                    (click)="getRecord(row.fileName)" 
+                ></tr>
+            </table>
+        </div>
+
+        <div class="ImageDetails">
+                <ngx-image-viewer
+                [src]="images"
+                [config] = "{
+                    zoomFactor: 0.1,
+                    containerBackgroundColor: '#fff',
+                    wheelZoom: true,
+                    allowFullscreen: false,
+                    allowKeyboardNavigation: true,
+                    btnShow: {
+                        zoomIn: false,
+                        zoomOut: false,
+                        rotateClockwise: false,
+                        rotateCounterClockwise: false,
+                        next: false,
+                        prev: false
+                    }
+                }"
+                ></ngx-image-viewer>
+        </div>
+    </div>
+    <div class = "description">
+            <p id="cadName" >FILE NAME: {{currentChoice.cadName}}</p>
+            <p id="descriptionCAD">DESCRIPTION: {{currentChoice.description}}</p>
+            <p id="link">Link</p>
+            <p>{{currentChoice.link}}</p>
+    </div>
+    <button mat-raised-button color="primary" ngxClipboard [cbContent]= "currentChoice.command">Copy to Clipboard</button>
+    <!--
+    <div class="addToAutoCAD">
+        <button mat-raised-button color="primary">ADD TO AUTOCAD</button>
+    </div>
+    -->
+</div>
+
+<div>
+    <p style="font-size: 0.4em;">software made by TH and DN, GouvisEngineering Employees</p>
+</div>
+
+

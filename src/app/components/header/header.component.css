@@ -1,0 +1,59 @@
+.table1{
+    width: 90%;
+    float:right;
+}
+
+.table-container{
+    overflow: auto;
+    height: 50vh;
+}
+
+.IDcol{
+    width: 100px;
+    font-weight: 0.5em;
+}
+
+.ImageDetails{
+
+    height: 50vh;
+}
+
+.block1{
+    margin: auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 20px;
+    width: 90%;
+}
+
+.addToAutoCAD{
+    margin-top: 10vh;
+}
+
+.mat-row:hover {
+    background-color: rgb(240, 240, 240);
+    cursor: pointer;
+}
+
+.description{
+    font-size: 0.5em;
+    align-items: left;
+}
+
+#cadName{
+    color: red;
+}
+
+#descriptionCAD{
+    color: blue;
+}
+
+
+.SearchMe{
+    font-size: 0.5em;
+    width: 50vw;
+}
+
+.imagePreview{
+    width: 40vh;
+}
