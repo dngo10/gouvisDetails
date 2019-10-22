@@ -1,6 +1,0 @@
-{  
-    "/api/*": {  
-       "target": "http://gonet.hopto.org",  
-       "secure": false
-    }  
- }  

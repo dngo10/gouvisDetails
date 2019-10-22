@@ -1,8 +1,14 @@
 import { Component, OnInit, Input, HostListener, Injectable, ChangeDetectorRef } from '@angular/core';
 import { ThemePalette } from '@angular/material';
-import { HttpClient} from '@angular/common/http';
+import { HttpClient, HttpHeaders} from '@angular/common/http';
 import {Observable, Subscription} from 'rxjs';
 //import jsonData from  '../../../assets/Json/Data.json';
+
+const httpOptions = {
+  headers: new HttpHeaders({
+    'Content-Type':  'application/json',
+  })
+};
 
 
 @Component({
@@ -13,6 +19,10 @@ import {Observable, Subscription} from 'rxjs';
 
 @Injectable()
 export class HeaderComponent implements OnInit {
+
+  isProcessing : boolean = true;
+  istextSearchFocus : boolean = false;
+  index: number = 0;
 
   value = '';
   oldValue = '';
@@ -40,25 +50,37 @@ export class HeaderComponent implements OnInit {
     
     var data1 : any;
     this.getConfig(this.value).subscribe((data:[DataDwg]) => {
+      this.isProcessing = true;
       this.DataDwgArray = data;
       this.dataSource = this.DataDwgArray;
-      this.getRecordIndex(20);
+      this.getRecordIndex(0);
+      this.isProcessing = false;
     });
 
     
  
   }
 
+  searchFocusFunction(){
+    this.istextSearchFocus = true;
+  }
+
+  searchUnFocusFunction(){
+    this.istextSearchFocus = false;
+  }
+
 
   getConfig(value: string){
-    return this.http.get("http://gonet.hopto.org/api/gouvisdetails/" + encodeURI(value));
+    this.value = value;
+    return this.http.get("http://140.82.55.90/api/gouvisdetails/" + encodeURI(value));
+    
   }
 
   @HostListener('window:keydown', ['$event'])
   keyEvent(event: KeyboardEvent){
     if(this.currentChoice.chosenItem == -1) return;
 
-    if(event.keyCode == KEY_CODE.LEFT_ARROW){
+    if(event.keyCode == KEY_CODE.LEFT_ARROW && !this.istextSearchFocus){
       
       if(this.currentChoice.chosenItem == 0) return;
       
@@ -69,7 +91,7 @@ export class HeaderComponent implements OnInit {
       this.getRecordIndex(this.currentChoice.chosenItem -1);
     }
 
-    if(event.keyCode == KEY_CODE.RIGHT_ARROW){
+    if(event.keyCode == KEY_CODE.RIGHT_ARROW && !this.istextSearchFocus){
       if(this.currentChoice.chosenItem == this.dataSource.length - 1){
         return;
       }
@@ -82,12 +104,17 @@ export class HeaderComponent implements OnInit {
     }
 
     if(event.keyCode == KEY_CODE.ENTER && this.value != this.oldValue){
-      console.log(this.value);
+      this.scrollTopTable();
+      this.isProcessing = true;
+      //console.log(this.value);
       this.getConfig(this.value).subscribe((data:[DataDwg]) => {
         this.jsonStr =  JSON.stringify(data); 
         this.DataDwgArray = JSON.parse(this.jsonStr);
         this.dataSource = this.DataDwgArray;
         this.oldValue = this.value;
+        this.getRecordIndex(0);
+        this.isProcessing = false;
+        
       });
     }
   
@@ -108,6 +135,7 @@ export class HeaderComponent implements OnInit {
     this.currentChoice.description = this.DataDwgArray[this.currentChoice.chosenItem].name;
     this.currentChoice.link = "I:/library/details/" + ID;
     this.currentChoice.scale = this.DataDwgArray[this.currentChoice.chosenItem].scale;
+    this.currentChoice.fileName = this.DataDwgArray[this.currentChoice.chosenItem].fileName;
     this.updataImagePreview();
     this.getCommand(this.currentChoice);
   }
@@ -121,6 +149,7 @@ export class HeaderComponent implements OnInit {
     this.currentChoice.imageSource = "../../assets/PreViewPictures/" +data.fileName.substr(0, data.fileName.length-4).replace(' ', '%20') + ".jpg";
     this.currentChoice.link = "I:/library/details/" + data.fileName;
     this.currentChoice.scale = data.scale;
+    this.currentChoice.fileName = data.fileName;
     this.updataImagePreview();
     this.getCommand(this.currentChoice);
   }
@@ -144,10 +173,31 @@ export class HeaderComponent implements OnInit {
 
   clearInput(){
     this.value = '';
-    console.log("clicked");
   }
 
+  updateDatabase(){
+    let item: postItem = new postItem();
+    item.fileName = this.currentChoice.fileName;
+    item.tag = this.value.toLocaleLowerCase().trim();
+    this.addHero(item).subscribe();
+  }
 
+  scrollTopTable(){
+      var matTable= document.getElementById('tableCroll');
+      matTable.scrollTop = 0;
+
+  }
+
+  addHero (item: postItem) {
+    return this.http.post<postItem>("http://140.82.55.90/api/gouvisdetails/", item, httpOptions).pipe();
+
+  } 
+
+}
+
+class postItem{
+  fileName: string;
+  tag: string;
 }
 
 class DataDwg{
@@ -166,7 +216,8 @@ class currentChoosenDwg{
   chosenItem : number = -1;
   imageSource: string;
   command: string;
-  scale : string
+  scale : string;
+  fileName: string;
 }
 
 export interface FileCad{

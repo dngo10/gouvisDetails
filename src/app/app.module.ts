@@ -15,6 +15,7 @@ import { CodeClipboardComponent } from './components/code-clipboard/code-clipboa
 import { ClipboardModule } from 'ngx-clipboard';
 import {MatIconModule} from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
 @NgModule({
   declarations: [
@@ -35,7 +36,8 @@ import { FormsModule } from '@angular/forms';
     ImageViewerModule.forRoot(),
     ClipboardModule,
     MatIconModule,
-    FormsModule
+    FormsModule,
+    MatProgressSpinnerModule
   ],
 
   exports:[
