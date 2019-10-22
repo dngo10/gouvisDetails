@@ -146,7 +146,7 @@ export class HeaderComponent implements OnInit {
     this.currentChoice.cadName = data.cadName;
     this.currentChoice.chosenItem = choice;
     this.currentChoice.description = data.name;
-    this.currentChoice.imageSource = "../../assets/PreViewPictures/" +data.fileName.substr(0, data.fileName.length-4).replace(' ', '%20') + ".jpg";
+    this.currentChoice.imageSource = "assets/PreViewPictures/" +data.fileName.substr(0, data.fileName.length-4).replace(' ', '%20') + ".jpg";
     this.currentChoice.link = "I:/library/details/" + data.fileName;
     this.currentChoice.scale = data.scale;
     this.currentChoice.fileName = data.fileName;
