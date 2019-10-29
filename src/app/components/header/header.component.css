@@ -3,6 +3,12 @@ body{
     padding: 0;
 }
 
+.viwer1{
+    height: 50vh;
+    width: 50vw;
+    border: 1px red solid;
+}
+
 .table1{
     width: 90%;
     float:right;
@@ -96,6 +102,17 @@ body{
     text-align: left;    
 }
 
+.mat-column-date{
+    font-size: .4em;
+    background-color: #666666;
+        -webkit-background-clip: text;
+        -moz-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        text-shadow: rgba(255,255,255,0.5) 0px 3px 3px;
+    text-align: left;  
+}
+
   #textdesc{
       color: gray;
       font-size: .8em;
@@ -143,3 +160,26 @@ body{
   .highlight {
     background: rgb(201, 226, 255);
     }
+
+.tempText{
+    color: gray;
+    font-size: .3em;
+}
+
+.gridView1{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-row-gap: 5vh;
+    height: 50vh;
+    overflow: auto;
+}
+
+.myItemText{
+    font-size: .35em;
+    background-color: #666666;
+    -webkit-background-clip: text;
+    -moz-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: rgba(255,255,255,0.5) 0px 3px 3px;
+}

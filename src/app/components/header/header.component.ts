@@ -1,7 +1,8 @@
 import { Component, OnInit, Input, HostListener, Injectable, ChangeDetectorRef } from '@angular/core';
-import { ThemePalette } from '@angular/material';
+import { ThemePalette, TooltipPosition } from '@angular/material';
 import { HttpClient, HttpHeaders} from '@angular/common/http';
 import {Observable, Subscription} from 'rxjs';
+import { FormControl } from '@angular/forms';
 //import jsonData from  '../../../assets/Json/Data.json';
 
 const httpOptions = {
@@ -20,7 +21,38 @@ const httpOptions = {
 @Injectable()
 export class HeaderComponent implements OnInit {
 
-  isProcessing : boolean = true;
+
+  config = {  
+    btnClass: 'default',
+    zoomFactor: 0,
+    containerBackgroundColor: '#ccc',
+    wheelZoom: false,
+    allowFullscreen: true,
+    allowKeyboardNavigation: false,
+    btnIcons: {
+      zoomIn: 'fa fa-plus',
+      zoomOut: 'fa fa-minus',
+      rotateClockwise: 'fa fa-repeat',
+      rotateCounterClockwise: 'fa fa-undo',
+      next: 'fa fa-arrow-right',
+      prev: 'fa fa-arrow-left',
+      fullscreen: 'fa fa-arrows-alt'
+    },
+    btnShow: {
+      zoomIn: false,
+      zoomOut: false,
+      rotateClockwise: false,
+      rotateCounterClockwise: false,
+      next: false,
+      prev: false
+    }
+  }
+
+  positionOptions: TooltipPosition[] = ['after', 'before', 'above', 'below', 'left', 'right'];
+  position = new FormControl(this.positionOptions[0]);
+  position1 = new FormControl(this.positionOptions[4]);
+
+  isProcessing : boolean = true; 
   istextSearchFocus : boolean = false;
   index: number = 0;
 
@@ -29,7 +61,7 @@ export class HeaderComponent implements OnInit {
 
   jsonStr;
 
-  displayedColumns : string[] = ['ID', 'description'];
+  displayedColumns : string[] = ['ID', 'description', 'date'];
   dataSource: DataDwg[] ;
   images: string[] = [""];
 
@@ -72,7 +104,7 @@ export class HeaderComponent implements OnInit {
 
   getConfig(value: string){
     this.value = value;
-    return this.http.get("http://140.82.55.90/api/gouvisdetails/" + encodeURI(value));
+    return this.http.get("http://140.82.55.90:81/api/gouvisdetails/" + encodeURI(value));
     
   }
 
@@ -101,10 +133,11 @@ export class HeaderComponent implements OnInit {
       }
 
       this.getRecordIndex(this.currentChoice.chosenItem + 1);
+      this.scrollTopTable(this.currentChoice.chosenItem*this.DataDwgArray.length*document.defaultView.innerHeight/20000);
     }
 
     if(event.keyCode == KEY_CODE.ENTER && this.value != this.oldValue){
-      this.scrollTopTable();
+      this.scrollTopTable(0);
       this.isProcessing = true;
       //console.log(this.value);
       this.getConfig(this.value).subscribe((data:[DataDwg]) => {
@@ -127,13 +160,14 @@ export class HeaderComponent implements OnInit {
   }
 
   getRecord(ID : string){
-    this.currentChoice.imageSource = "assets/PreViewPictures/" +ID.substr(0, ID.length-4).replace(' ', '%20') + ".jpg";
+    var temp = ID.split('\\');
+    var temp1 = temp[temp.length-1];
+    this.currentChoice.imageSource = "assets/PreViewPictures/" +temp1.substr(0, temp1.length-4).replace(' ', '%20') + ".jpg";
     this.currentChoice.chosenItem = this.DataDwgArray.findIndex((getDwgData) => {
       return getDwgData.fileName == ID;
     });
     this.currentChoice.cadName = this.DataDwgArray[this.currentChoice.chosenItem].cadName;
     this.currentChoice.description = this.DataDwgArray[this.currentChoice.chosenItem].name;
-    this.currentChoice.link = "I:/library/details/" + ID;
     this.currentChoice.scale = this.DataDwgArray[this.currentChoice.chosenItem].scale;
     this.currentChoice.fileName = this.DataDwgArray[this.currentChoice.chosenItem].fileName;
     this.updataImagePreview();
@@ -146,8 +180,9 @@ export class HeaderComponent implements OnInit {
     this.currentChoice.cadName = data.cadName;
     this.currentChoice.chosenItem = choice;
     this.currentChoice.description = data.name;
-    this.currentChoice.imageSource = "assets/PreViewPictures/" +data.fileName.substr(0, data.fileName.length-4).replace(' ', '%20') + ".jpg";
-    this.currentChoice.link = "I:/library/details/" + data.fileName;
+    var temp = data.fileName.split('\\');
+    var temp1 = temp[temp.length-1];
+    this.currentChoice.imageSource = "assets/PreViewPictures/" +temp1.substr(0, temp1.length-4).replace(' ', '%20') + ".jpg";
     this.currentChoice.scale = data.scale;
     this.currentChoice.fileName = data.fileName;
     this.updataImagePreview();
@@ -162,7 +197,7 @@ export class HeaderComponent implements OnInit {
 
   getCommand(currentChoice: currentChoosenDwg):void{
     currentChoice.command = "";
-    currentChoice.command += "(command \"-ATTACH\" \"" +  currentChoice.link + "\" \"A\" pause \"" + currentChoice.scale + "\" \"\" \"\")\n";
+    currentChoice.command += "(command \"-ATTACH\" \"" +  currentChoice.fileName.split('\\').join('/') + "\" \"A\" pause \"" + currentChoice.scale + "\" \"\" \"\")\n";
 
   }
 
@@ -182,16 +217,32 @@ export class HeaderComponent implements OnInit {
     this.addHero(item).subscribe();
   }
 
-  scrollTopTable(){
+  scrollTopTable(index: number){
       var matTable= document.getElementById('tableCroll');
-      matTable.scrollTop = 0;
+      matTable.scrollTop = index;
 
   }
 
   addHero (item: postItem) {
-    return this.http.post<postItem>("http://140.82.55.90/api/gouvisdetails/", item, httpOptions).pipe();
+    return this.http.post<postItem>("http://140.82.55.90:81/api/gouvisdetails/", item, httpOptions).pipe();
 
-  } 
+  }
+
+  getDate(item: number): string{
+    let numberstring: string = item.toString();
+    let year = numberstring.substr(0, 4);
+    let month = numberstring.substr(4, 2);
+    let day = numberstring.substr(6, 2);
+    return  month + "/" + day + "/" + year;
+
+  }
+
+  getThumnails(filePath: string):string{
+    let str: string[] = filePath.split('\\');
+    let fileName: string = str[str.length-1];
+    let path:string = "assets/thumbnails/" +fileName.substr(0, fileName.length - 4) + ".png";
+    return path;
+  }
 
 }
 
@@ -212,7 +263,6 @@ class DataDwg{
 class currentChoosenDwg{
   cadName: string;
   description: string;
-  link: string;
   chosenItem : number = -1;
   imageSource: string;
   command: string;

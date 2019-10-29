@@ -1,4 +1,5 @@
 <div class="header23">
+
     <H4>Gouvis Engineering</H4>
     <div class="seachBar" [class.mat-elevation-z2]="true">
         <mat-form-field class="SearchMe mat-display-1">
@@ -7,69 +8,82 @@
                 <mat-icon>close</mat-icon>
             </button>
           </mat-form-field>
-
     </div>
     <div class= "block1">
         <div *ngIf="isProcessing" class= "spinner1">
                 <mat-spinner></mat-spinner>
         </div>
-        
-        <div *ngIf="!isProcessing" class = "table-container" id="tableCroll" >
-            <table mat-table [dataSource] ="dataSource" matSort>
 
-                <ng-container matColumnDef="ID">
-                  <td mat-header-cell *matHeaderCellDef>File Name</td>
-                  <td mat-cell *matCellDef="let element"> {{element.fileName}} </td>
-                </ng-container> 
-
-                <ng-container matColumnDef="description">
-                  <td mat-header-cell *matHeaderCellDef>Description</td>
-                  <td mat-cell *matCellDef="let element"> {{element.name}} </td>
-                </ng-container>
         
-                <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-                <tr mat-row *matRowDef="let row; columns: displayedColumns;" 
-                    [ngClass]="{highlight: currentChoice.fileName == row.fileName}" 
-                    (click)="getRecord(row.fileName)" 
-                >  </tr>
-            </table>
+        <div *ngIf="!isProcessing" class="gridView1" id="tableCroll">
+            <div *ngFor="let item of dataSource" class="gridElement">
+                <img src="{{getThumnails(item.fileName)}}" (click)="getRecord(item.fileName)" >
+                <p class="myItemText">{{item.fileName}}</p>
+                <p class="myItemText">{{item.name}}</p>
+                <p class="myItemText">{{getDate(item.date)}}</p>
+            </div>
         </div>
+        
+        <!--
+        <div *ngIf="!isProcessing" class = "table-container" id="tableCroll">
+            <div>
+                <table mat-table [dataSource] ="dataSource">
 
-        <div class="ImageDetails">
+                    <ng-container matColumnDef="ID">
+                      <td mat-header-cell *matHeaderCellDef>File Name</td>
+                      <td mat-cell *matCellDef="let element"> {{element.fileName}} </td>
+                    </ng-container> 
+            
+                    <ng-container matColumnDef="description">
+                      <td mat-header-cell *matHeaderCellDef>Description</td>
+                      <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+                    </ng-container>
+            
+                    <ng-container matColumnDef="date">
+                        <td mat-header-cell *matHeaderCellDef>Date</td>
+                        <td mat-cell *matCellDef="let element"> {{getDate(element.date)}} </td>
+                    </ng-container>
+                    
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns;" 
+                        [ngClass]="{highlight: currentChoice.fileName == row.fileName}" 
+                        (click)="getRecord(row.fileName)" 
+                    >  </tr>
+                    </table>
+            </div>            
+        </div>
+        -->
+
+        
+        <div class="ImageDetails"
+        matTooltip="Press left, right arrow"
+        [matTooltipPosition] = "position1.value"
+        aria-label="Button that shows a red tooltip"
+        >
                 <ngx-image-viewer
                 [src]="images"
-                [config] = "{
-                    zoomFactor: 0.1,
-                    containerBackgroundColor: '#fff',
-                    wheelZoom: true,
-                    allowFullscreen: false,
-                    allowKeyboardNavigation: true,
-                    btnShow: {
-                        zoomIn: false,
-                        zoomOut: false,
-                        rotateClockwise: false,
-                        rotateCounterClockwise: false,
-                        next: false,
-                        prev: false
-                    }
-                }"
+                [config] ="config"
                 ></ngx-image-viewer>
         </div>
+
+        
     </div>
-    <div class="buttonClick">
-            <button mat-raised-button color="primary" ngxClipboard [cbContent]= "currentChoice.command" (click)="updateDatabase(value)">Copy to Clipboard</button>
+    <div class="buttonClick" >
+            <button mat-raised-button color="primary" 
+                    matTooltip="[1] Click it --- [2]paste to the COMMAND LINE of AutoCAD"
+                    [matTooltipPosition] = "position.value"
+                    aria-label="Button that shows a red tooltip"
+                    ngxClipboard [cbContent]= "currentChoice.command"
+                    (click)="updateDatabase(value)">Copy to Clipboard
+            </button>
     </div>
     
     <div  class = "description"  [class.mat-elevation-z2]="true">
             <p id="textdesc" >FILE NAME: {{currentChoice.cadName}}</p>
             <p id="textdesc">DESCRIPTION: {{currentChoice.description}}</p>
-            <p id="textdesc">{{currentChoice.link}}</p>
+            <p id="textdesc">{{currentChoice.fileName}}</p>
     </div>
-    <!--
-    <div class="addToAutoCAD">
-        <button mat-raised-button color="primary">ADD TO AUTOCAD</button>
-    </div>
-    -->
+    <p class="tempText">Wait for Thanh Huynh's Tag algorithm</p>    
 </div>
 
 
