@@ -1,5 +1,5 @@
-import { Component, OnInit, Input, HostListener, Injectable, ChangeDetectorRef } from '@angular/core';
-import { ThemePalette, TooltipPosition } from '@angular/material';
+import { Component, OnInit, Input, HostListener, Injectable, ChangeDetectorRef, ViewChild } from '@angular/core';
+import { ThemePalette, TooltipPosition, MatPaginator, MatTableDataSource } from '@angular/material';
 import { HttpClient, HttpHeaders} from '@angular/common/http';
 import {Observable, Subscription} from 'rxjs';
 import { FormControl } from '@angular/forms';
@@ -61,11 +61,14 @@ export class HeaderComponent implements OnInit {
 
   jsonStr;
 
-  displayedColumns : string[] = ['ID', 'description', 'date'];
-  dataSource: DataDwg[] ;
+  //displayedColumns : string[] = ['thumbnail','ID', 'description', 'date'];
+  displayedColumns : string[] = ['thumbnail','ID'];
+  dataSource:  MatTableDataSource<DataDwg>  ;
   images: string[] = [""];
 
   DataDwgArray:[DataDwg] = [new DataDwg()];
+
+  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
 
   currentChoice: currentChoosenDwg;
 
@@ -80,15 +83,27 @@ export class HeaderComponent implements OnInit {
     //this.jsonStr = JSON.stringify(jsonData);
     //this.DataDwgArray = JSON.parse(temp);
     
+
+  }
+
+  ngOnInit(): void {
     var data1 : any;
-    this.getConfig(this.value).subscribe((data:[DataDwg]) => {
+    this.getConfig(this.value).subscribe((data:[DataDwg]) => { //this.value
       this.isProcessing = true;
       this.DataDwgArray = data;
-      this.dataSource = this.DataDwgArray;
+      this.dataSource = new MatTableDataSource(this.DataDwgArray);
       this.getRecordIndex(0);
       this.isProcessing = false;
-    });
+      this.dataSource.paginator = this.paginator;
+    });  
+    //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
+    //Add 'implements OnInit' to the class.
+    
+  }
 
+  ngAfterViewInit(): void {
+    //Called after ngAfterContentInit when the component's view has been initialized. Applies to components only.
+    //Add 'implements AfterViewInit' to the class.
     
  
   }
@@ -116,7 +131,7 @@ export class HeaderComponent implements OnInit {
       
       if(this.currentChoice.chosenItem == 0) return;
       
-      if(this.dataSource.length == 0){
+      if(this.dataSource.data.length == 0){
         return;
       }
 
@@ -124,11 +139,11 @@ export class HeaderComponent implements OnInit {
     }
 
     if(event.keyCode == KEY_CODE.RIGHT_ARROW && !this.istextSearchFocus){
-      if(this.currentChoice.chosenItem == this.dataSource.length - 1){
+      if(this.currentChoice.chosenItem == this.dataSource.data.length - 1){
         return;
       }
 
-      if(this.dataSource.length == 0){
+      if(this.dataSource.data.length == 0){
         return;
       }
 
@@ -143,11 +158,13 @@ export class HeaderComponent implements OnInit {
       this.getConfig(this.value).subscribe((data:[DataDwg]) => {
         this.jsonStr =  JSON.stringify(data); 
         this.DataDwgArray = JSON.parse(this.jsonStr);
-        this.dataSource = this.DataDwgArray;
+        this.dataSource = new MatTableDataSource(this.DataDwgArray);
         this.oldValue = this.value;
         this.getRecordIndex(0);
         this.isProcessing = false;
-        
+        this.dataSource.paginator = this.paginator;
+        this.paginator.length = this.dataSource.data.length;
+        this.paginator.pageIndex = 0;
       });
     }
   
@@ -156,13 +173,11 @@ export class HeaderComponent implements OnInit {
   @Input()
   color: ThemePalette ;
 
-  ngOnInit() {
-  }
 
   getRecord(ID : string){
     var temp = ID.split('\\');
     var temp1 = temp[temp.length-1];
-    this.currentChoice.imageSource = "assets/PreViewPictures/" +temp1.substr(0, temp1.length-4).replace(' ', '%20') + ".jpg";
+    this.currentChoice.imageSource = "assets/PreViewPictures/" +temp1.substr(0, temp1.length-4).split('%20').join(' ') + ".jpg";
     this.currentChoice.chosenItem = this.DataDwgArray.findIndex((getDwgData) => {
       return getDwgData.fileName == ID;
     });
@@ -176,13 +191,13 @@ export class HeaderComponent implements OnInit {
 
 
   getRecordIndex(choice: number){
-    let data: DataDwg = this.dataSource[choice];
+    let data: DataDwg = this.dataSource.data[choice];
     this.currentChoice.cadName = data.cadName;
     this.currentChoice.chosenItem = choice;
     this.currentChoice.description = data.name;
     var temp = data.fileName.split('\\');
     var temp1 = temp[temp.length-1];
-    this.currentChoice.imageSource = "assets/PreViewPictures/" +temp1.substr(0, temp1.length-4).replace(' ', '%20') + ".jpg";
+    this.currentChoice.imageSource = "assets/PreViewPictures/" +temp1.substr(0, temp1.length-4).split('%20').join(' ') + ".jpg";
     this.currentChoice.scale = data.scale;
     this.currentChoice.fileName = data.fileName;
     this.updataImagePreview();
@@ -191,7 +206,7 @@ export class HeaderComponent implements OnInit {
 
 
   getOrderSummary(): Observable<any>{
-    var jsonData = this.http.get('../../assets/Json/Data.json');
+    var jsonData = this.http.get('assets/Json/Data.json');
     return jsonData;
   }
 
@@ -257,6 +272,7 @@ class DataDwg{
   name: string;
   scale: string;
   textString: string;
+  date: number;
 }
 
 

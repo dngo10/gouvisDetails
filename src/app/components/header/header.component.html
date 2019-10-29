@@ -11,29 +11,45 @@
     </div>
     <div class= "block1">
         <div *ngIf="isProcessing" class= "spinner1">
-                <mat-spinner></mat-spinner>
+            <mat-spinner></mat-spinner>
         </div>
 
-        
-        <div *ngIf="!isProcessing" class="gridView1" id="tableCroll">
-            <div *ngFor="let item of dataSource" class="gridElement">
-                <img src="{{getThumnails(item.fileName)}}" (click)="getRecord(item.fileName)" >
-                <p class="myItemText">{{item.fileName}}</p>
-                <p class="myItemText">{{item.name}}</p>
-                <p class="myItemText">{{getDate(item.date)}}</p>
-            </div>
-        </div>
-        
         <!--
+        <div>
+            <div *ngIf="!isProcessing" class="gridView1" id="tableCroll">
+                <div *ngFor="let item of dataSource" class="gridElement"
+                    [ngClass]="{highlight: currentChoice.fileName == item.fileName}" 
+                >
+                    <img src="{{getThumnails(item.fileName)}}" (click)="getRecord(item.fileName)" >
+                    <p class="myItemText">{{item.fileName}}</p>
+                    <p class="myItemText">{{item.name}}</p>
+                    <p class="myItemText">{{getDate(item.date)}}</p>
+                </div>
+            
+            </div>
+            <mat-paginator [pageSize]="30"></mat-paginator>
+        </div>
+        -->
+        
+
+        <div>
         <div *ngIf="!isProcessing" class = "table-container" id="tableCroll">
-            <div>
                 <table mat-table [dataSource] ="dataSource">
+
+                    <ng-container matColumnDef="thumbnail">
+                        <td mat-header-cell *matHeaderCellDef>Image</td>
+                        <td mat-cell *matCellDef="let element"><img src="{{getThumnails(element.fileName)}}"/></td>
+                    </ng-container> 
 
                     <ng-container matColumnDef="ID">
                       <td mat-header-cell *matHeaderCellDef>File Name</td>
-                      <td mat-cell *matCellDef="let element"> {{element.fileName}} </td>
+                      <td mat-cell *matCellDef="let element"> <p>{{element.fileName}}</p> 
+                                                              <p>{{element.name}}</p>
+                                                              <p>{{getDate(element.date)}}</p>
+                    </td>
                     </ng-container> 
-            
+                    
+                    <!--
                     <ng-container matColumnDef="description">
                       <td mat-header-cell *matHeaderCellDef>Description</td>
                       <td mat-cell *matCellDef="let element"> {{element.name}} </td>
@@ -43,20 +59,22 @@
                         <td mat-header-cell *matHeaderCellDef>Date</td>
                         <td mat-cell *matCellDef="let element"> {{getDate(element.date)}} </td>
                     </ng-container>
+                    -->
                     
                     <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
                     <tr mat-row *matRowDef="let row; columns: displayedColumns;" 
                         [ngClass]="{highlight: currentChoice.fileName == row.fileName}" 
                         (click)="getRecord(row.fileName)" 
                     >  </tr>
-                    </table>
-            </div>            
+                </table>
         </div>
-        -->
+        <mat-paginator [pageSize]="30"></mat-paginator> 
+    </div>
+
 
         
         <div class="ImageDetails"
-        matTooltip="Press left, right arrow"
+        matTooltip="Press left or right arrow"
         [matTooltipPosition] = "position1.value"
         aria-label="Button that shows a red tooltip"
         >
@@ -70,7 +88,7 @@
     </div>
     <div class="buttonClick" >
             <button mat-raised-button color="primary" 
-                    matTooltip="[1] Click it --- [2]paste to the COMMAND LINE of AutoCAD"
+                    matTooltip="[1] Click it --- [2] Paste to the COMMAND LINE of AutoCAD"
                     [matTooltipPosition] = "position.value"
                     aria-label="Button that shows a red tooltip"
                     ngxClipboard [cbContent]= "currentChoice.command"

@@ -82,35 +82,17 @@ body{
 
 .mat-column-ID {
     font-size: .4em;
-    background-color: #666666;
-        -webkit-background-clip: text;
-        -moz-background-clip: text;
-        background-clip: text;
-        color: transparent;
-        text-shadow: rgba(255,255,255,0.5) 0px 3px 3px;
-    text-align: left;
+    color: gray;
   }
 
 .mat-column-description{
     font-size: .4em;
-    background-color: #666666;
-        -webkit-background-clip: text;
-        -moz-background-clip: text;
-        background-clip: text;
-        color: transparent;
-        text-shadow: rgba(255,255,255,0.5) 0px 3px 3px;
-    text-align: left;    
+    color: gray;  
 }
 
 .mat-column-date{
     font-size: .4em;
-    background-color: #666666;
-        -webkit-background-clip: text;
-        -moz-background-clip: text;
-        background-clip: text;
-        color: transparent;
-        text-shadow: rgba(255,255,255,0.5) 0px 3px 3px;
-    text-align: left;  
+    color: gray; 
 }
 
   #textdesc{
@@ -158,11 +140,11 @@ body{
   }
 
   .highlight {
-    background: rgb(201, 226, 255);
+    background: rgb(219, 219, 219);
     }
 
 .tempText{
-    color: gray;
+    color: rgb(221, 221, 221);
     font-size: .3em;
 }
 
@@ -172,6 +154,37 @@ body{
     grid-row-gap: 5vh;
     height: 50vh;
     overflow: auto;
+    -webkit-box-shadow: 0px 0px 40px 0px rgba(0,0,0,0.35);
+    -moz-box-shadow: 0px 0px 40px 0px rgba(0,0,0,0.35);
+    box-shadow: 0px 0px 40px 0px rgba(0,0,0,0.35);
+}
+
+@media only screen and (max-width: 1431px){
+    .gridView1{
+        grid-template-columns: 1fr 1fr;
+    }
+    
+}
+
+@media only screen and (max-width: 1049px){
+    .block1{
+        grid-template-columns: 1fr;
+        grid-row-gap: 2vh;
+    }
+
+    .gridView1{
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+    
+}
+
+
+@media only screen and (max-width: 657px){
+
+    .gridView1{
+        grid-template-columns: 1fr 1fr ;
+    }
+    
 }
 
 .myItemText{
@@ -182,4 +195,8 @@ body{
     background-clip: text;
     color: transparent;
     text-shadow: rgba(255,255,255,0.5) 0px 3px 3px;
+}
+
+.gridElement:hover{
+    cursor: pointer;
 }
