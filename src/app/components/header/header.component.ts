@@ -53,6 +53,7 @@ export class HeaderComponent implements OnInit {
   position1 = new FormControl(this.positionOptions[4]);
 
   isProcessing : boolean = true; 
+  isNull: boolean = false;
   istextSearchFocus : boolean = false;
   index: number = 0;
 
@@ -120,6 +121,7 @@ export class HeaderComponent implements OnInit {
   getConfig(value: string){
     this.value = value;
     return this.http.get("http://140.82.55.90:81/api/gouvisdetails/" + encodeURI(value));
+    //return this.http.get("http://localhost:5000/api/gouvisdetails/" + encodeURI(value));
     
   }
 
@@ -148,23 +150,34 @@ export class HeaderComponent implements OnInit {
       }
 
       this.getRecordIndex(this.currentChoice.chosenItem + 1);
-      this.scrollTopTable(this.currentChoice.chosenItem*this.DataDwgArray.length*document.defaultView.innerHeight/20000);
     }
 
-    if(event.keyCode == KEY_CODE.ENTER && this.value != this.oldValue){
+    if(event.keyCode == KEY_CODE.ENTER){
       this.scrollTopTable(0);
       this.isProcessing = true;
+      this.isNull = false;
       //console.log(this.value);
       this.getConfig(this.value).subscribe((data:[DataDwg]) => {
-        this.jsonStr =  JSON.stringify(data); 
-        this.DataDwgArray = JSON.parse(this.jsonStr);
-        this.dataSource = new MatTableDataSource(this.DataDwgArray);
-        this.oldValue = this.value;
-        this.getRecordIndex(0);
-        this.isProcessing = false;
-        this.dataSource.paginator = this.paginator;
-        this.paginator.length = this.dataSource.data.length;
-        this.paginator.pageIndex = 0;
+        this.jsonStr =  JSON.stringify(data);
+        try{
+          this.DataDwgArray = JSON.parse(this.jsonStr);
+          if(this.DataDwgArray == null){
+            this.isNull = true;
+            return;
+          } 
+          this.isNull = false;
+          
+          this.dataSource = new MatTableDataSource(this.DataDwgArray);
+          this.oldValue = this.value;
+          this.getRecordIndex(0);
+          this.isProcessing = false;
+          this.dataSource.paginator = this.paginator;
+          this.paginator.length = this.dataSource.data.length;
+          this.paginator.pageIndex = 0;
+        } catch{
+          this.isNull = true;
+          return;
+        }
       });
     }
   
@@ -234,12 +247,16 @@ export class HeaderComponent implements OnInit {
 
   scrollTopTable(index: number){
       var matTable= document.getElementById('tableCroll');
-      matTable.scrollTop = index;
+      if(matTable != null){
+        matTable.scrollTop = index;
+      }
+      
 
   }
 
   addHero (item: postItem) {
     return this.http.post<postItem>("http://140.82.55.90:81/api/gouvisdetails/", item, httpOptions).pipe();
+    //return this.http.post<postItem>("http://localhost:5000/api/gouvisdetails/", item, httpOptions).pipe();
 
   }
 

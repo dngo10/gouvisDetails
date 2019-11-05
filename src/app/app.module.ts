@@ -17,6 +17,7 @@ import { FormsModule } from '@angular/forms';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatPaginatorModule} from '@angular/material/paginator';
+import {MatDialogModule} from '@angular/material/dialog';
 //import { ImageViewerModule } from 'ng2-image-viewer';
 
 @NgModule({
@@ -41,6 +42,7 @@ import {MatPaginatorModule} from '@angular/material/paginator';
     MatProgressSpinnerModule,
     MatTooltipModule,
     MatPaginatorModule
+
   ],
 
   exports:[
@@ -50,7 +52,8 @@ import {MatPaginatorModule} from '@angular/material/paginator';
     MatInputModule,
     MatTableModule,
     CdkTableModule,
-    MatIconModule 
+    MatIconModule,
+    MatDialogModule
   ],
   
   providers: [],

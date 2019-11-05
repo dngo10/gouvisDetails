@@ -10,8 +10,15 @@
           </mat-form-field>
     </div>
     <div class= "block1">
-        <div *ngIf="isProcessing" class= "spinner1">
+
+        <div class="tableCombo">
+        
+        <div *ngIf="isProcessing && !isNull" class= "spinner1">
             <mat-spinner></mat-spinner>
+        </div>
+
+        <div *ngIf="isNull" class="isNull" [class.mat-elevation-z8]="true">
+            <p>NO RESULT</p>
         </div>
 
         <!--
@@ -30,11 +37,8 @@
             <mat-paginator [pageSize]="30"></mat-paginator>
         </div>
         -->
-        
-
-        <div>
-        <div *ngIf="!isProcessing" class = "table-container" id="tableCroll">
-                <table mat-table [dataSource] ="dataSource">
+        <div *ngIf="!isProcessing && !isNull" class = "table-container" id="tableCroll">
+                <table mat-table [dataSource] ="dataSource" class="tableIn">
 
                     <ng-container matColumnDef="thumbnail">
                         <td mat-header-cell *matHeaderCellDef>Image</td>
@@ -55,7 +59,7 @@
                       <td mat-cell *matCellDef="let element"> {{element.name}} </td>
                     </ng-container>
             
-                    <ng-container matColumnDef="date">
+                    <ng-container matColumnDef="da te">
                         <td mat-header-cell *matHeaderCellDef>Date</td>
                         <td mat-cell *matCellDef="let element"> {{getDate(element.date)}} </td>
                     </ng-container>
@@ -68,7 +72,8 @@
                     >  </tr>
                 </table>
         </div>
-        <mat-paginator [pageSize]="30"></mat-paginator> 
+        <mat-paginator [pageSize]="20" class= "paginator"></mat-paginator> 
+        
     </div>
 
 
@@ -101,7 +106,7 @@
             <p id="textdesc">DESCRIPTION: {{currentChoice.description}}</p>
             <p id="textdesc">{{currentChoice.fileName}}</p>
     </div>
-    <p class="tempText">Wait for Thanh Huynh's Tag algorithm</p>    
+    <p>Gouvis Group &copy; 2019</p>
 </div>
 
 
