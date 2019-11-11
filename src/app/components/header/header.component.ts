@@ -122,7 +122,6 @@ export class HeaderComponent implements OnInit {
     this.value = value;
     return this.http.get("http://140.82.55.90:81/api/gouvisdetails/" + encodeURI(value));
     //return this.http.get("http://localhost:5000/api/gouvisdetails/" + encodeURI(value));
-    
   }
 
   @HostListener('window:keydown', ['$event'])
@@ -184,7 +183,7 @@ export class HeaderComponent implements OnInit {
   }
 
   @Input()
-  color: ThemePalette ;
+  color: ThemePalette;
 
 
   getRecord(ID : string){
@@ -303,18 +302,8 @@ class currentChoosenDwg{
   fileName: string;
 }
 
-export interface FileCad{
-  ID: string;
-  description: string;
-}
-
 export enum KEY_CODE{
   RIGHT_ARROW = 39,
   LEFT_ARROW = 37,
   ENTER = 13
 }
-
-export interface Config {
-  DataDwgArray:[DataDwg];
-}
-
